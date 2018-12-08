@@ -7,7 +7,6 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/ishkawa/wire_example/domain"
 	"github.com/ishkawa/wire_example/domain/mock_domain"
-	"github.com/ishkawa/wire_example/domain/wire_test"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -29,7 +28,7 @@ func (suite *FooServiceTestSuite) SetupTest() {
 	suite.ctx = context.Background()
 	suite.ctrl = gomock.NewController(suite.T())
 	suite.provider = mock_domain.NewProvider(suite.ctrl)
-	suite.service = wire_test.InitializeFooService(suite.provider)
+	suite.service = mock_domain.InitializeFooService(suite.provider)
 }
 
 func (suite *FooServiceTestSuite) TearDownTest() {
