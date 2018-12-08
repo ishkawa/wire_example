@@ -5,18 +5,51 @@ import (
 	"testing"
 
 	"github.com/golang/mock/gomock"
+	"github.com/ishkawa/wire_example/domain"
+	"github.com/ishkawa/wire_example/domain/mock_domain"
 	"github.com/ishkawa/wire_example/domain/wire_test"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestDuplicate(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
+type FooServiceTestSuite struct {
+	suite.Suite
 
-	service := wire_test.InitializeFooService(ctrl)
+	ctx      context.Context
+	ctrl     *gomock.Controller
+	provider *mock_domain.Provider
+	service  domain.FooService
+}
 
-	ctx := context.Background()
-	duplicated, err := service.Duplicate(ctx, 123)
-	assert.NoError(t, err)
-	assert.Equal(t, "foo", duplicated.Name)
+func TestFooServiceTestSuite(t *testing.T) {
+	suite.Run(t, new(FooServiceTestSuite))
+}
+
+func (suite *FooServiceTestSuite) SetupTest() {
+	suite.ctx = context.Background()
+	suite.ctrl = gomock.NewController(suite.T())
+	suite.provider = mock_domain.NewProvider(suite.ctrl)
+	suite.service = wire_test.InitializeFooService(suite.provider)
+}
+
+func (suite *FooServiceTestSuite) TearDownTest() {
+	suite.ctrl.Finish()
+}
+
+func (suite *FooServiceTestSuite) TestDuplicate() {
+	source := &domain.Foo{ID: 123, Name: "Source"}
+
+	suite.provider.MockFooRepository.EXPECT().
+		Get(suite.ctx, source.ID).
+		Return(source, nil)
+
+	suite.provider.MockFooRepository.EXPECT().
+		Put(suite.ctx, gomock.Any()).
+		Do(func(ctx context.Context, duplicated *domain.Foo) {
+			assert.Equal(suite.T(), int64(0), duplicated.ID)
+			assert.Equal(suite.T(), source.Name, duplicated.Name)
+		})
+
+	err := suite.service.Duplicate(suite.ctx, source.ID)
+	assert.NoError(suite.T(), err)
 }

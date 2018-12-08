@@ -6,15 +6,14 @@
 package wire_test
 
 import (
-	"github.com/golang/mock/gomock"
 	"github.com/ishkawa/wire_example/domain"
 	"github.com/ishkawa/wire_example/domain/mock_domain"
 )
 
 // Injectors from wire.go:
 
-func InitializeFooService(ctrl *gomock.Controller) domain.FooService {
-	mockFooRepository := mock_domain.NewMockFooRepository(ctrl)
+func InitializeFooService(provider *mock_domain.Provider) domain.FooService {
+	mockFooRepository := mock_domain.ProvideFooRepository(provider)
 	fooService := domain.NewFooService(mockFooRepository)
 	return fooService
 }
