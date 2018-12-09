@@ -16,6 +16,10 @@ type fooService struct {
 }
 
 func (service *fooService) Create(ctx context.Context, name string) (created *Foo, err error) {
+	if name == "" {
+		err = ErrInvalidArgument
+		return
+	}
 	created = &Foo{Name: name}
 	err = service.fooRepository.Put(ctx, created)
 	return

@@ -53,6 +53,11 @@ func (suite *FooServiceTestSuite) TestCreate() {
 	assert.Equal(suite.T(), name, created.Name)
 }
 
+func (suite *FooServiceTestSuite) TestCreateInvalid() {
+	_, err := suite.service.Create(suite.ctx, "")
+	assert.Error(suite.T(), err, domain.ErrInvalidArgument)
+}
+
 func (suite *FooServiceTestSuite) TestDuplicate() {
 	source := &domain.Foo{ID: 123, Name: "Source"}
 	allocatedID := int64(456)
