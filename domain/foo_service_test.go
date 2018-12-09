@@ -55,6 +55,7 @@ func (suite *FooServiceTestSuite) TestCreate() {
 
 func (suite *FooServiceTestSuite) TestDuplicate() {
 	source := &domain.Foo{ID: 123, Name: "Source"}
+	allocatedID := int64(456)
 
 	suite.provider.MockFooRepository.EXPECT().
 		Get(suite.ctx, source.ID).
@@ -65,8 +66,11 @@ func (suite *FooServiceTestSuite) TestDuplicate() {
 		Do(func(ctx context.Context, duplicated *domain.Foo) {
 			assert.Equal(suite.T(), int64(0), duplicated.ID)
 			assert.Equal(suite.T(), source.Name, duplicated.Name)
+			duplicated.ID = allocatedID
 		})
 
-	err := suite.service.Duplicate(suite.ctx, source.ID)
+	duplicated, err := suite.service.Duplicate(suite.ctx, source.ID)
 	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), allocatedID, duplicated.ID)
+	assert.Equal(suite.T(), source.Name, duplicated.Name)
 }

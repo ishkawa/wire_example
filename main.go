@@ -16,7 +16,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	err = fooService.Duplicate(ctx, created.ID)
+	_, err = fooService.Duplicate(ctx, created.ID)
 	if err != nil {
 		log.Fatal(err)
 	}
