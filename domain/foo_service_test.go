@@ -35,6 +35,24 @@ func (suite *FooServiceTestSuite) TearDownTest() {
 	suite.ctrl.Finish()
 }
 
+func (suite *FooServiceTestSuite) TestCreate() {
+	name := "Dave"
+	allocatedID := int64(123)
+
+	suite.provider.MockFooRepository.EXPECT().
+		Put(suite.ctx, gomock.Any()).
+		Do(func(ctx context.Context, created *domain.Foo) {
+			assert.Equal(suite.T(), int64(0), created.ID)
+			assert.Equal(suite.T(), name, created.Name)
+			created.ID = allocatedID
+		})
+
+	created, err := suite.service.Create(suite.ctx, name)
+	assert.NoError(suite.T(), err)
+	assert.Equal(suite.T(), allocatedID, created.ID)
+	assert.Equal(suite.T(), name, created.Name)
+}
+
 func (suite *FooServiceTestSuite) TestDuplicate() {
 	source := &domain.Foo{ID: 123, Name: "Source"}
 

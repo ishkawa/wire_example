@@ -11,7 +11,12 @@ func main() {
 	fooService := InitializeFooService()
 	ctx := context.Background()
 
-	err := fooService.Duplicate(ctx, 1)
+	created, err := fooService.Create(ctx, "John")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	err = fooService.Duplicate(ctx, created.ID)
 	if err != nil {
 		log.Fatal(err)
 	}
