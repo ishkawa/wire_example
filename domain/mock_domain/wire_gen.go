@@ -7,7 +7,6 @@ package mock_domain
 
 import (
 	"github.com/golang/mock/gomock"
-	"github.com/google/wire"
 	"github.com/ishkawa/wire_example/domain"
 )
 
@@ -34,6 +33,3 @@ func NewProvider(ctrl *gomock.Controller) *Provider {
 func ProvideFooRepository(provider *Provider) *MockFooRepository {
 	return provider.MockFooRepository
 }
-
-var WireSet = wire.NewSet(
-	ProvideFooRepository, wire.Bind(new(domain.FooRepository), new(MockFooRepository)))

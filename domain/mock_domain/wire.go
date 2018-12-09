@@ -22,10 +22,11 @@ func ProvideFooRepository(provider *Provider) *MockFooRepository {
 	return provider.MockFooRepository
 }
 
-var WireSet = wire.NewSet(
-	ProvideFooRepository, wire.Bind(new(domain.FooRepository), new(MockFooRepository)))
-
 func InitializeFooService(provider *Provider) (fooService domain.FooService) {
-	wire.Build(domain.WireSet, WireSet)
+	wire.Build(
+		domain.WireSet,
+		ProvideFooRepository,
+		wire.Bind(new(domain.FooRepository), new(MockFooRepository)))
+
 	return
 }
