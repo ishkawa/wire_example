@@ -2,7 +2,6 @@ package infra
 
 import (
 	"context"
-	"errors"
 	"log"
 
 	"github.com/ishkawa/wire_example/domain"
@@ -20,7 +19,7 @@ func (repo *fooRepository) Get(ctx context.Context, id int64) (foo *domain.Foo, 
 	if found, ok := store[id]; ok {
 		foo = found
 	} else {
-		err = errors.New("no such entity")
+		err = domain.ErrNoSuchEntity
 	}
 	return
 }
