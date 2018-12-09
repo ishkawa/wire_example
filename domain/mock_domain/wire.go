@@ -8,25 +8,26 @@ import (
 	"github.com/ishkawa/wire_example/domain"
 )
 
-type Provider struct {
+type MockRepositorySet struct {
 	MockFooRepository *MockFooRepository
 }
 
-func NewProvider(ctrl *gomock.Controller) *Provider {
-	return &Provider{
+func NewProvider(ctrl *gomock.Controller) *MockRepositorySet {
+	return &MockRepositorySet{
 		MockFooRepository: NewMockFooRepository(ctrl),
 	}
 }
 
-func ProvideFooRepository(provider *Provider) *MockFooRepository {
-	return provider.MockFooRepository
+func ProvideFooRepository(repositorySet *MockRepositorySet) *MockFooRepository {
+	return repositorySet.MockFooRepository
 }
 
-func InitializeFooService(provider *Provider) (fooService domain.FooService) {
-	wire.Build(
-		domain.WireSet,
-		ProvideFooRepository,
-		wire.Bind(new(domain.FooRepository), new(MockFooRepository)))
+var providerSet = wire.NewSet(
+	domain.WireSet,
+	ProvideFooRepository,
+	wire.Bind(new(domain.FooRepository), new(MockFooRepository)))
 
+func InitializeFooService(provider *MockRepositorySet) (fooService domain.FooService) {
+	wire.Build(providerSet)
 	return
 }

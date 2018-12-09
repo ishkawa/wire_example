@@ -7,12 +7,13 @@ package mock_domain
 
 import (
 	"github.com/golang/mock/gomock"
+	"github.com/google/wire"
 	"github.com/ishkawa/wire_example/domain"
 )
 
 // Injectors from wire.go:
 
-func InitializeFooService(provider *Provider) domain.FooService {
+func InitializeFooService(provider *MockRepositorySet) domain.FooService {
 	mockFooRepository := ProvideFooRepository(provider)
 	fooService := domain.NewFooService(mockFooRepository)
 	return fooService
@@ -20,16 +21,18 @@ func InitializeFooService(provider *Provider) domain.FooService {
 
 // wire.go:
 
-type Provider struct {
+type MockRepositorySet struct {
 	MockFooRepository *MockFooRepository
 }
 
-func NewProvider(ctrl *gomock.Controller) *Provider {
-	return &Provider{
+func NewProvider(ctrl *gomock.Controller) *MockRepositorySet {
+	return &MockRepositorySet{
 		MockFooRepository: NewMockFooRepository(ctrl),
 	}
 }
 
-func ProvideFooRepository(provider *Provider) *MockFooRepository {
-	return provider.MockFooRepository
+func ProvideFooRepository(repositorySet *MockRepositorySet) *MockFooRepository {
+	return repositorySet.MockFooRepository
 }
+
+var providerSet = wire.NewSet(domain.WireSet, ProvideFooRepository, wire.Bind(new(domain.FooRepository), new(MockFooRepository)))

@@ -14,10 +14,10 @@ import (
 type FooServiceTestSuite struct {
 	suite.Suite
 
-	ctx      context.Context
-	ctrl     *gomock.Controller
-	provider *mock_domain.Provider
-	service  domain.FooService
+	ctx           context.Context
+	ctrl          *gomock.Controller
+	repositorySet *mock_domain.MockRepositorySet
+	service       domain.FooService
 }
 
 func TestFooServiceTestSuite(t *testing.T) {
@@ -27,8 +27,8 @@ func TestFooServiceTestSuite(t *testing.T) {
 func (suite *FooServiceTestSuite) SetupTest() {
 	suite.ctx = context.Background()
 	suite.ctrl = gomock.NewController(suite.T())
-	suite.provider = mock_domain.NewProvider(suite.ctrl)
-	suite.service = mock_domain.InitializeFooService(suite.provider)
+	suite.repositorySet = mock_domain.NewProvider(suite.ctrl)
+	suite.service = mock_domain.InitializeFooService(suite.repositorySet)
 }
 
 func (suite *FooServiceTestSuite) TearDownTest() {
@@ -39,7 +39,7 @@ func (suite *FooServiceTestSuite) TestCreate() {
 	name := "Dave"
 	allocatedID := int64(123)
 
-	suite.provider.MockFooRepository.EXPECT().
+	suite.repositorySet.MockFooRepository.EXPECT().
 		Put(suite.ctx, gomock.Any()).
 		Do(func(ctx context.Context, created *domain.Foo) {
 			assert.Equal(suite.T(), int64(0), created.ID)
@@ -62,11 +62,11 @@ func (suite *FooServiceTestSuite) TestDuplicate() {
 	source := &domain.Foo{ID: 123, Name: "Source"}
 	allocatedID := int64(456)
 
-	suite.provider.MockFooRepository.EXPECT().
+	suite.repositorySet.MockFooRepository.EXPECT().
 		Get(suite.ctx, source.ID).
 		Return(source, nil)
 
-	suite.provider.MockFooRepository.EXPECT().
+	suite.repositorySet.MockFooRepository.EXPECT().
 		Put(suite.ctx, gomock.Any()).
 		Do(func(ctx context.Context, duplicated *domain.Foo) {
 			assert.Equal(suite.T(), int64(0), duplicated.ID)
