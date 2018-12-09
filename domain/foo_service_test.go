@@ -27,7 +27,7 @@ func TestFooServiceTestSuite(t *testing.T) {
 func (suite *FooServiceTestSuite) SetupTest() {
 	suite.ctx = context.Background()
 	suite.ctrl = gomock.NewController(suite.T())
-	suite.repositorySet = mock_domain.NewProvider(suite.ctrl)
+	suite.repositorySet = mock_domain.NewRepositorySet(suite.ctrl)
 	suite.service = mock_domain.InitializeFooService(suite.repositorySet)
 }
 

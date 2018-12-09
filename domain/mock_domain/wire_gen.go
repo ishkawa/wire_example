@@ -25,7 +25,7 @@ type MockRepositorySet struct {
 	MockFooRepository *MockFooRepository
 }
 
-func NewProvider(ctrl *gomock.Controller) *MockRepositorySet {
+func NewRepositorySet(ctrl *gomock.Controller) *MockRepositorySet {
 	return &MockRepositorySet{
 		MockFooRepository: NewMockFooRepository(ctrl),
 	}
