@@ -38,3 +38,7 @@ func PrintStoreDump() {
 		log.Println(foo)
 	}
 }
+
+func ResetStore() {
+	store = map[int64]*domain.Foo{}
+}
