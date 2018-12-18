@@ -6,7 +6,7 @@ import (
 
 	"github.com/golang/mock/gomock"
 	"github.com/ishkawa/wire_example/domain"
-	"github.com/ishkawa/wire_example/domain/mock_domain"
+	"github.com/ishkawa/wire_example/domain/test_injector"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
@@ -16,7 +16,7 @@ type FooServiceTestSuite struct {
 
 	ctx           context.Context
 	ctrl          *gomock.Controller
-	repositorySet *mock_domain.MockRepositorySet
+	repositorySet *test_injector.MockRepositorySet
 	service       domain.FooService
 }
 
@@ -27,8 +27,8 @@ func TestFooServiceTestSuite(t *testing.T) {
 func (suite *FooServiceTestSuite) SetupTest() {
 	suite.ctx = context.Background()
 	suite.ctrl = gomock.NewController(suite.T())
-	suite.repositorySet = mock_domain.NewRepositorySet(suite.ctrl)
-	suite.service = mock_domain.InitializeFooService(suite.repositorySet)
+	suite.repositorySet = test_injector.NewRepositorySet(suite.ctrl)
+	suite.service = test_injector.InitializeFooService(suite.repositorySet)
 }
 
 func (suite *FooServiceTestSuite) TearDownTest() {
